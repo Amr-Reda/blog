@@ -2,7 +2,6 @@ from django.shortcuts import render,redirect
 from .models import Article,Comment
 from django.contrib.auth.decorators import login_required
 from . import forms
-from django.http import HttpResponse
 
 # Create your views here.
 def article(request):
@@ -15,13 +14,16 @@ def details(request,slug):
     comment =Comment.objects.filter(article=article)
     form = forms.CreateComment()
     if request.method == 'POST':
-        comment = forms.CreateComment(request.POST,request.FILES)
-        instance = comment.save(commit=False)
-        instance.author = request.user
-        instance.article = article
-        instance.save()
-        comment = Comment.objects.filter(article=article)
-        return render(request, 'article/details.html', {'article': article, 'comment': comment, 'form': form})
+        if request.user.is_authenticated :
+            comment = forms.CreateComment(request.POST,request.FILES)
+            instance = comment.save(commit=False)
+            instance.author = request.user
+            instance.article = article
+            instance.save()
+            comment = Comment.objects.filter(article=article)
+            return render(request, 'article/details.html', {'article': article, 'comment': comment, 'form': form})
+        else:
+            return redirect('accounts:login')
     else:
         return render(request,'article/details.html',{'article':article,'comment':comment,'form':form})
 
@@ -39,14 +41,3 @@ def create(request):
         form = forms.CreateArticle()
     return render(request,'article/create.html',{'form':form})
 
-
-
-    # if request.method == 'POST':
-    #     comment=forms.CreateComment(request.POST)
-    #     instance = comment.save(commit=False)
-    #     instance.author = request.user
-    #     instance.article = request.Article
-    #     instance.save()
-    #     return render(request,'article/details.html',{'article':article,'comment':comment})
-    # else:
-    #     return render(request, 'article/details.html', {'article': article})
