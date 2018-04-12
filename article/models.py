@@ -15,3 +15,14 @@ class Article(models.Model):
 
     def snippet(self):
         return self.body[:50]+'....'
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    text = models.TextField()
+    created_date = models.DateTimeField(auto_now_add=True)
+    article = models.ForeignKey(Article,on_delete=models.CASCADE,db_column='slug',default=None)
+
+
+    def __str__(self):
+        return self.text

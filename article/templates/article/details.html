@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-{%block content%}
+{% block content %}
 <div class="article-details">
     <div class="article">
         <img src="{{article.thumb.url}}"/>
@@ -8,4 +8,27 @@
         <p>{{article.date}}</p>
     </div>
 </div>
-{%endblock%}
+
+<div class="comment">
+    <h5 class="card-header">Leave a Comment:</h5>
+
+    <form class="site-form" action="{% url 'article:details' slug=article.slug %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<h1>comments</h1>
+  <div class="comments">
+    {% for com in comment %}
+    <div class="article">
+      <p>{{ com.text }}</p>
+      <p>{{ com.created_date }}</p>
+      <p> added by : {{ com.author }}</p>
+    </div>
+    {% endfor %}
+
+  </div>
+{% endblock %}
+

@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Article
+from .models import Article,Comment
 from django.contrib.auth.decorators import login_required
 from . import forms
 from django.http import HttpResponse
@@ -11,9 +11,20 @@ def article(request):
 
 
 def details(request,slug):
-    # return HttpResponse(slug)
     article =Article.objects.get(slug=slug)
-    return render(request,'article/details.html',{'article':article})
+    comment =Comment.objects.filter(article=article)
+    form = forms.CreateComment()
+    if request.method == 'POST':
+        comment = forms.CreateComment(request.POST,request.FILES)
+        instance = comment.save(commit=False)
+        instance.author = request.user
+        instance.article = article
+        instance.save()
+        comment = Comment.objects.filter(article=article)
+        return render(request, 'article/details.html', {'article': article, 'comment': comment, 'form': form})
+    else:
+        return render(request,'article/details.html',{'article':article,'comment':comment,'form':form})
+
 
 @login_required(login_url='/accounts/login')
 def create(request):
@@ -27,3 +38,15 @@ def create(request):
     else:
         form = forms.CreateArticle()
     return render(request,'article/create.html',{'form':form})
+
+
+
+    # if request.method == 'POST':
+    #     comment=forms.CreateComment(request.POST)
+    #     instance = comment.save(commit=False)
+    #     instance.author = request.user
+    #     instance.article = request.Article
+    #     instance.save()
+    #     return render(request,'article/details.html',{'article':article,'comment':comment})
+    # else:
+    #     return render(request, 'article/details.html', {'article': article})
