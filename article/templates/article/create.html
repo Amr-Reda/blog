@@ -1,11 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="create-article">
+<div class="container">
     <h2>create article</h2>
     <form class="site-form" action="{% url 'article:create' %}" method="post" enctype="multipart/form-data">
-    {% csrf_token%}
-    {{ form }}
-    <input type="submit" value="Create">
+
+            {% csrf_token%}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label }}
+                    {{ field }}
+                </div>
+            {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 </div>

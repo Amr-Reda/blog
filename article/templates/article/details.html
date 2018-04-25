@@ -1,34 +1,89 @@
 {% extends 'base.html'%}
+{% load static from staticfiles %}
 {% block content %}
-<div class="article-details">
-    <div class="article">
-        <img src="{{article.thumb.url}}"/>
-        <h2>{{article.title}}</h2>
-        <p>{{article.body}}</p>
-        <p>{{article.date}}</p>
+
+ <!-- Page Content -->
+    <div class="container">
+
+      <div class="row">
+
+        <!-- Post Content Column -->
+        <div class="col-lg-8">
+
+          <!-- Title -->
+          <h1 class="mt-4">{{article.title}}</h1>
+
+          <hr>
+
+          <!-- Date/Time -->
+          <p>Posted on {{article.date}}</p>
+
+          <hr>
+
+          <!-- Preview Image -->
+          <img class="img-fluid rounded" src="{{article.thumb.url}}" alt="">
+
+          <hr>
+
+          <!-- Post Content -->
+          <p class="lead">{{article.body}}</p>
+
+          <hr>
+
+          <!-- Single Comment -->
+            {% for com in comment %}
+              <div class="media mb-4">
+                <img class="d-flex mr-3 rounded-circle" style="width:50px" src="{% static 'sampleavatar.png' %}" alt="">
+                <div class="media-body">
+                  <h5 class="mt-0">{{ com.author }}</h5>
+                  {{ com.text }}
+                </div>
+              </div>
+            <hr>
+            {% endfor %}
+        </div>
+
+        <!-- Sidebar Widgets Column -->
+          <div class="col-md-4">
+        <br>
+        <br>
+        <br>
+
+          <!-- Search Widget -->
+          <div class="card my-4">
+            <h5 class="card-header">Search</h5>
+            <div class="card-body">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for...">
+                <span class="input-group-btn">
+                  <button class="btn btn-secondary" type="button">Go!</button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+           <!-- Comments Form -->
+              <div class="card my-4">
+            <h5 class="card-header">Leave a Comment:</h5>
+            <div class="card-body">
+              <form action="{% url 'article:details' slug=article.slug %}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                  {% csrf_token %}
+                  {{ form }}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.row -->
+
     </div>
-</div>
+    <!-- /.container -->
 
-<div class="comment">
-    <h5 class="card-header">Leave a Comment:</h5>
-
-    <form class="site-form" action="{% url 'article:details' slug=article.slug %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit">
-    </form>
-</div>
-
-<h1>comments</h1>
-  <div class="comments">
-    {% for com in comment %}
-    <div class="article">
-      <p>{{ com.text }}</p>
-      <p>{{ com.created_date }}</p>
-      <p> added by : {{ com.author }}</p>
-    </div>
-    {% endfor %}
-
-  </div>
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
 

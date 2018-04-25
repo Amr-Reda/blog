@@ -9,7 +9,5 @@ class CreateArticle(forms.ModelForm):
 
 
 
-class CreateComment(forms.ModelForm):
-    class Meta:
-        model = models.Comment
-        fields = ['text']
+class CreateComment(forms.Form):
+    comment = forms.CharField(label="",widget=forms.Textarea(attrs={'rows':'3','class':'form-control'}))
