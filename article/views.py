@@ -40,4 +40,3 @@ def create(request):
     else:
         form = forms.CreateArticle()
     return render(request,'article/create.html',{'form':form})
-
